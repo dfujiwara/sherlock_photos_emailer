@@ -1,0 +1,22 @@
+{
+  "name": "sherlock_photos_emailer",
+  "version": "1.0.0",
+  "description": "Sends photos of Sherlock to designated emails",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dfujiwara/sherlock_photos_emailer.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dfujiwara/sherlock_photos_emailer/issues"
+  },
+  "homepage": "https://github.com/dfujiwara/sherlock_photos_emailer#readme",
+  "dependencies": {
+    "@google-cloud/storage": "^2.3.3"
+  }
+}
