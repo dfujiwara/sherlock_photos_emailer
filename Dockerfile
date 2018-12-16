@@ -5,6 +5,7 @@ WORKDIR /app
 COPY *.js /app/
 COPY *.json /app/
 COPY run.sh /app
+RUN chmod 0555 /app/run.sh
 
 RUN npm install
 
