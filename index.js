@@ -1,6 +1,7 @@
 const config = require('./config')
 const gmailSend = require('gmail-send')
 const {Storage} = require('@google-cloud/storage');
+const log = require('simple-node-logger').createSimpleLogger({level: 'all'})
 
 const storage = new Storage({
     projectId: config.projectId
@@ -29,13 +30,21 @@ const sendEmail = (photoURL, recipients) => {
         text: 'Look at Sherlock!',
         files: [photoURL]
     })
-    recipients.forEach(recipient => {
-        send({
-            to: recipient
-        }, (err, res) => {
-            console.log('send() callback returned: err:', err, '; res:', res)
-        })
+    const promises = recipients.map(recipient => {
+        return new Promise((resolve, reject) =>
+            send({
+                to: recipient
+            }, (err, res) => {
+                if (err != null) {
+                    reject(err)
+                } else {
+                    log.info('success sending email!')
+                    resolve(res)
+                }
+            })
+        )
     })
+    return Promise.all(promises)
 }
 
 selectRandomPhoto()
@@ -43,8 +52,8 @@ selectRandomPhoto()
         return getPhoto(file)
     })
     .then(photoURL => {
-        sendEmail(photoURL, config.recipients)
+        return sendEmail(photoURL, config.recipients)
     })
     .catch((error) => {
-        console.log(error)
+        log.error(error)
     })

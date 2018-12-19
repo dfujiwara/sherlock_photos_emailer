@@ -18,6 +18,7 @@
   "homepage": "https://github.com/dfujiwara/sherlock_photos_emailer#readme",
   "dependencies": {
     "@google-cloud/storage": "^2.3.3",
-    "gmail-send": "^1.2.14"
+    "gmail-send": "^1.2.14",
+    "simple-node-logger": "^0.93.40"
   }
 }
