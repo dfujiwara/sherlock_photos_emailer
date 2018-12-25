@@ -26,8 +26,8 @@ const sendEmail = (photoURL, recipients) => {
     const send = gmailSend({
         user: config.emailUserName,
         pass: config.password,
-        subject: 'Random Sherlock Photo',
-        text: 'Look at Sherlock!',
+        subject: 'Sherlock photo of the day',
+        text: 'That\'s our Sherlock!',
         files: [photoURL]
     })
     const promises = recipients.map(recipient => {
