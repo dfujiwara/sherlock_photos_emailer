@@ -1,7 +1,13 @@
 const config = require('./config')
 const gmailSend = require('gmail-send')
 const {Storage} = require('@google-cloud/storage');
-const log = require('simple-node-logger').createSimpleLogger({level: 'all'})
+
+
+const opts = {
+  level: 'all',
+  timestampFormat:'YYYY-MM-DD HH:mm:ss.SSS'
+}
+const log = require('simple-node-logger').createSimpleLogger(opts)
 
 const storage = new Storage({
     projectId: config.projectId
