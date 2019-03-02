@@ -19,6 +19,7 @@
   "dependencies": {
     "@google-cloud/storage": "^2.3.3",
     "gmail-send": "^1.2.14",
+    "redis": "^2.8.0",
     "simple-node-logger": "^0.93.40"
   },
   "devDependencies": {
