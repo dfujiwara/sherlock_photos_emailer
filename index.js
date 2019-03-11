@@ -18,7 +18,7 @@ const selectRandomPhoto = async () => {
   const [files] = await storage.bucket(config.storageBucketName).getFiles()
 
   // Set up Redis connection and relevant methods that will be used.
-  const client = redis.createClient()
+  const client = redis.createClient({ host: 'redis' })
   const redisLrange = promisify(client.lrange).bind(client)
   const redisLpop = promisify(client.lpop).bind(client)
   const redisRpush = promisify(client.rpush).bind(client)
