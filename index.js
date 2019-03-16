@@ -1,6 +1,7 @@
 const config = require('./config')
 const gmailSend = require('gmail-send')
 const { Storage } = require('@google-cloud/storage')
+const { ExifImage } = require('exif')
 const redis = require('redis')
 const { promisify } = require('util')
 
@@ -51,11 +52,27 @@ const getPhoto = async (file) => {
   return fileURL
 }
 
-const sendEmail = (photoURL, recipients) => {
+const getPhotoExif = (photoURL) => {
+  return new Promise((resolve, reject) => {
+    ExifImage({ image: photoURL }, (err, exif) => {
+      if (err !== null) {
+        reject(err)
+      } else {
+        resolve({ photoURL, exif })
+      }
+    })
+  })
+}
+
+const sendEmail = (photoURL, exif, recipients) => {
+  // Parse the date portion from the exif date time and
+  const split = exif.exif.DateTimeOriginal.split(' ')
+  const photoDate = split[0].replace(/:/g, '-')
+
   const send = gmailSend({
     user: config.emailUserName,
     pass: config.password,
-    subject: 'Sherlock photo of the day',
+    subject: `Sherlock photo of the day from ${photoDate}`,
     text: 'That\'s our Sherlock!',
     files: [photoURL]
   })
@@ -81,7 +98,10 @@ selectRandomPhoto()
     return getPhoto(file)
   })
   .then(photoURL => {
-    return sendEmail(photoURL, config.recipients)
+    return getPhotoExif(photoURL)
+  })
+  .then(({ photoURL, exif }) => {
+    return sendEmail(photoURL, exif, config.recipients)
   })
   .catch((error) => {
     log.error(error)
