@@ -52,27 +52,33 @@ const getPhoto = async (file) => {
   return fileURL
 }
 
-const getPhotoExif = (photoURL) => {
+const getPhotoData = (photoURL) => {
   return new Promise((resolve, reject) => {
     ExifImage({ image: photoURL }, (err, exif) => {
       if (err !== null) {
-        reject(err)
+        log.error(err)
+        resolve({
+          photoURL,
+          subject: `Sherlock photo of the day`
+        })
       } else {
-        resolve({ photoURL, exif })
+        // Parse the date portion from the exif date time and
+        const split = exif.exif.DateTimeOriginal.split(' ')
+        const photoDate = split[0].replace(/:/g, '-')
+        resolve({
+          photoURL,
+          subject: `Sherlock photo of the day from ${photoDate}`
+        })
       }
     })
   })
 }
 
-const sendEmail = (photoURL, exif, recipients) => {
-  // Parse the date portion from the exif date time and
-  const split = exif.exif.DateTimeOriginal.split(' ')
-  const photoDate = split[0].replace(/:/g, '-')
-
+const sendEmail = ({ photoURL, subject }, recipients) => {
   const send = gmailSend({
     user: config.emailUserName,
     pass: config.password,
-    subject: `Sherlock photo of the day from ${photoDate}`,
+    subject: subject,
     text: 'That\'s our Sherlock!',
     files: [photoURL]
   })
@@ -98,10 +104,10 @@ selectRandomPhoto()
     return getPhoto(file)
   })
   .then(photoURL => {
-    return getPhotoExif(photoURL)
+    return getPhotoData(photoURL)
   })
-  .then(({ photoURL, exif }) => {
-    return sendEmail(photoURL, exif, config.recipients)
+  .then(photoData => {
+    return sendEmail(photoData, config.recipients)
   })
   .catch((error) => {
     log.error(error)
