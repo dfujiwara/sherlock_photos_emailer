@@ -4,7 +4,9 @@
   "description": "Sends photos of Sherlock to designated emails",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "docker-compose build",
+    "start": "docker-compose down && docker-compose up -d"
   },
   "repository": {
     "type": "git",
