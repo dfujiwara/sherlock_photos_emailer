@@ -48,7 +48,7 @@ const getPhoto = async (file) => {
   await storage
     .bucket(config.storageBucketName)
     .file(file.name)
-    .download({ destination: './photo.jpeg' })
+    .download({ destination: fileURL })
   return fileURL
 }
 
