@@ -1,12 +1,38 @@
 const config = require('./config')
+const { promisify } = require('util')
+const redis = require('redis')
 const { Storage } = require('@google-cloud/storage')
 
 const storage = new Storage({
   projectId: config.projectId
 })
 
-const getFiles = async () => {
-  return storage.bucket(config.storageBucketName).getFiles()
+const selectRandomFile = async () => {
+  const [files] = await storage.bucket(config.storageBucketName).getFiles()
+
+  // Set up Redis connection and relevant methods that will be used.
+  const client = redis.createClient({ host: 'redis' })
+  const redisLrange = promisify(client.lrange).bind(client)
+  const redisLpop = promisify(client.lpop).bind(client)
+  const redisRpush = promisify(client.rpush).bind(client)
+  const redisQuit = promisify(client.quit).bind(client)
+
+  const redisKey = 'key'
+  const previousPhotoFileNames = await redisLrange(redisKey, 0, -1)
+  const previousPhotoNameSet = new Set(previousPhotoFileNames)
+  const filteredPhotoFiles = files.filter((file) => {
+    return !previousPhotoNameSet.has(file.name)
+  })
+  const randomIndex = Math.floor(Math.random() * filteredPhotoFiles.length)
+  const randomPhotoFile = filteredPhotoFiles[randomIndex]
+
+  // Only keep the photos from last 30 invocatinos to avoid repeats.
+  if (previousPhotoNameSet.size >= 30) {
+    await redisLpop(redisKey)
+  }
+  await redisRpush(redisKey, randomPhotoFile.name)
+  await redisQuit()
+  return randomPhotoFile
 }
 
 const download = async (file, destinationURL) => {
@@ -16,4 +42,4 @@ const download = async (file, destinationURL) => {
     .download({ destination: destinationURL })
 }
 
-module.exports = { getFiles, download }
+module.exports = { selectRandomFile, download }
