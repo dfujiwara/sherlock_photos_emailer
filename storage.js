@@ -32,7 +32,11 @@ const selectRandomFile = async () => {
   }
   await redisRpush(redisKey, randomPhotoFile.name)
   await redisQuit()
-  return randomPhotoFile
+
+  // Retrieve metadata of the given file.
+  const [metadata] = await randomPhotoFile.getMetadata()
+
+  return { file: randomPhotoFile, metadata }
 }
 
 const download = async (file, destinationURL) => {
