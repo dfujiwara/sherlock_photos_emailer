@@ -99,16 +99,15 @@ const sendEmail = ({ photoURL, subject }, recipients) => {
   return Promise.all(promises)
 }
 
-selectRandomPhoto()
-  .then(file => {
-    return getPhoto(file)
-  })
-  .then(photoURL => {
-    return getPhotoData(photoURL)
-  })
-  .then(photoData => {
-    return sendEmail(photoData, config.recipients)
-  })
-  .catch((error) => {
+const run = async () => {
+  try {
+    const file = await selectRandomPhoto()
+    const photoURL = await getPhoto(file)
+    const photoData = await getPhotoData(photoURL)
+    await sendEmail(photoData, config.recipients)
+  } catch (error) {
     log.error(error)
-  })
+  }
+}
+
+run()
