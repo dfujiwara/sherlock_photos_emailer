@@ -1,15 +1,10 @@
 const config = require('./config')
-const gmailSend = require('gmail-send')
 const { Storage } = require('@google-cloud/storage')
 const { ExifImage } = require('exif')
 const redis = require('redis')
 const { promisify } = require('util')
-
-const opts = {
-  level: 'all',
-  timestampFormat: 'YYYY-MM-DD HH:mm:ss.SSS'
-}
-const log = require('simple-node-logger').createSimpleLogger(opts)
+const log = require('./log')
+const email = require('./email')
 
 const storage = new Storage({
   projectId: config.projectId
@@ -74,37 +69,12 @@ const getPhotoData = (photoURL) => {
   })
 }
 
-const sendEmail = ({ photoURL, subject }, recipients) => {
-  const send = gmailSend({
-    user: config.emailUserName,
-    pass: config.password,
-    subject: subject,
-    text: 'That\'s our Sherlock!',
-    files: [photoURL]
-  })
-  const promises = recipients.map(recipient => {
-    return new Promise((resolve, reject) =>
-      send({
-        to: recipient
-      }, (err, res) => {
-        if (err != null) {
-          reject(err)
-        } else {
-          log.info('success sending email!')
-          resolve(res)
-        }
-      })
-    )
-  })
-  return Promise.all(promises)
-}
-
 const run = async () => {
   try {
     const file = await selectRandomPhoto()
     const photoURL = await getPhoto(file)
     const photoData = await getPhotoData(photoURL)
-    await sendEmail(photoData, config.recipients)
+    await email.send(photoData, config.recipients, config.emailUserName, config.password)
   } catch (error) {
     log.error(error)
   }
