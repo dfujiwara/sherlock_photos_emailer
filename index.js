@@ -1,17 +1,13 @@
 const config = require('./config')
-const { Storage } = require('@google-cloud/storage')
 const redis = require('redis')
 const { promisify } = require('util')
 const log = require('./log')
 const email = require('./email')
 const photos = require('./photos')
-
-const storage = new Storage({
-  projectId: config.projectId
-})
+const storage = require('./storage')
 
 const selectRandomPhoto = async () => {
-  const [files] = await storage.bucket(config.storageBucketName).getFiles()
+  const [files] = await storage.getFiles()
 
   // Set up Redis connection and relevant methods that will be used.
   const client = redis.createClient({ host: 'redis' })

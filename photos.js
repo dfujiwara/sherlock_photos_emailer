@@ -1,19 +1,10 @@
-const config = require('./config')
 const { ExifImage } = require('exif')
 const log = require('./log')
-const { Storage } = require('@google-cloud/storage')
-
-const storage = new Storage({
-  projectId: config.projectId
-})
+const storage = require('./storage')
 
 const getPhoto = async (file) => {
   const fileURL = './photo.jpeg'
-  await storage
-    .bucket(config.storageBucketName)
-    .file(file.name)
-    .download({ destination: fileURL })
-
+  await storage.download(file, fileURL)
   return getPhotoData(fileURL)
 }
 
