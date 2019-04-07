@@ -1,13 +1,13 @@
 const gmailSend = require('gmail-send')
 const log = require('./log')
 
-const send = ({ photoURL, subject }, recipients, emailUserName, password) => {
+const send = ({ files, subject, text }, recipients, emailUserName, password) => {
   const sendEmail = gmailSend({
     user: emailUserName,
     pass: password,
     subject: subject,
-    text: 'That\'s our Sherlock!',
-    files: [photoURL]
+    text: text,
+    files: files
   })
   const promises = recipients.map(recipient => {
     return new Promise((resolve, reject) =>

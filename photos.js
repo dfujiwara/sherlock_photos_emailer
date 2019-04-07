@@ -22,8 +22,9 @@ const getPhotoData = (photoURL) => {
         const split = exif.exif.DateTimeOriginal.split(' ')
         const photoDate = split[0].replace(/:/g, '-')
         resolve({
-          photoURL,
-          subject: `Sherlock photo of the day from ${photoDate}`
+          files: [photoURL],
+          subject: `Sherlock photo of the day from ${photoDate}`,
+          text: `Sherlock's best time`
         })
       }
     })
