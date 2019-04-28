@@ -2,7 +2,7 @@ const config = require('./config')
 const { promisify } = require('util')
 const redis = require('redis')
 const { Storage } = require('@google-cloud/storage')
-
+const log = require('./log')
 const storage = new Storage({
   projectId: config.projectId
 })
@@ -23,6 +23,8 @@ const selectRandomFile = async () => {
   const filteredPhotoFiles = files.filter((file) => {
     return !previousPhotoNameSet.has(file.name)
   })
+  log.info(`filtered photos from ${files.length} to ${filteredPhotoFiles.length}`)
+
   const randomIndex = Math.floor(Math.random() * filteredPhotoFiles.length)
   const randomPhotoFile = filteredPhotoFiles[randomIndex]
 
