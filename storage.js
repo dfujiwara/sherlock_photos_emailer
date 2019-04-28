@@ -26,7 +26,7 @@ const selectRandomFile = async () => {
   const randomIndex = Math.floor(Math.random() * filteredPhotoFiles.length)
   const randomPhotoFile = filteredPhotoFiles[randomIndex]
 
-  // Only keep the photos from last 30 invocatinos to avoid repeats.
+  // Only keep the photos from last 30 invocations to avoid repeats.
   if (previousPhotoNameSet.size >= 30) {
     await redisLpop(redisKey)
   }
