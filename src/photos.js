@@ -9,13 +9,15 @@ const getPhoto = async (file) => {
 }
 
 const getPhotoData = (photoURL) => {
+  const emailText = `Sherlock's best time`
   return new Promise((resolve, reject) => {
     ExifImage({ image: photoURL }, (err, exif) => {
       if (err !== null) {
         log.error(err)
         resolve({
-          photoURL,
-          subject: `Sherlock photo of the day`
+          files: [photoURL],
+          subject: `Sherlock photo of the day`,
+          text: emailText
         })
       } else {
         // Parse the date portion from the exif date time and
@@ -24,7 +26,7 @@ const getPhotoData = (photoURL) => {
         resolve({
           files: [photoURL],
           subject: `Sherlock photo of the day from ${photoDate}`,
-          text: `Sherlock's best time`
+          text: emailText
         })
       }
     })
