@@ -2,7 +2,7 @@ FROM node:10.13.0
 RUN apt-get update && apt-get -y install cron
 
 WORKDIR /app
-COPY *.js /app/
+COPY index.js /app/
 COPY *.json /app/
 COPY run.sh /app
 RUN chmod 0555 /app/run.sh
