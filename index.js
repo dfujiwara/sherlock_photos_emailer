@@ -1,8 +1,8 @@
-const config = require('./config')
-const log = require('./log')
-const email = require('./email')
-const photos = require('./photos')
-const storage = require('./storage')
+const config = require('./src/config')
+const log = require('./src/log')
+const email = require('./src/email')
+const photos = require('./src/photos')
+const storage = require('./src/storage')
 
 const run = async () => {
   try {
