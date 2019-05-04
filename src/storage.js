@@ -7,6 +7,11 @@ const storage = new Storage({
   projectId: config.projectId
 })
 
+const FileTypes = Object.freeze({
+  video: 'video',
+  photo: 'image'
+})
+
 const selectRandomFile = async () => {
   const [files] = await storage.bucket(config.storageBucketName).getFiles()
 
@@ -37,8 +42,8 @@ const selectRandomFile = async () => {
 
   // Retrieve metadata of the given file.
   const [metadata] = await randomPhotoFile.getMetadata()
-
-  return { file: randomPhotoFile, metadata }
+  const fileType = parseFileType(metadata)
+  return { file: randomPhotoFile, fileType }
 }
 
 const download = async (file, destinationURL) => {
@@ -48,4 +53,25 @@ const download = async (file, destinationURL) => {
     .download({ destination: destinationURL })
 }
 
-module.exports = { selectRandomFile, download }
+const parseFileType = (metadata) => {
+  const contentType = metadata.contentType
+  if (contentType === undefined) {
+    return FileTypes.photo
+  }
+  const contentTypeArray = contentType.split('/')
+  if (contentTypeArray.length === 0) {
+    return FileTypes.photo
+  }
+  switch (contentTypeArray[0]) {
+    case FileTypes.video:
+      return FileTypes.video
+    default:
+      return FileTypes.photo
+  }
+}
+
+module.exports = {
+  selectRandomFile,
+  download,
+  FileTypes
+}
