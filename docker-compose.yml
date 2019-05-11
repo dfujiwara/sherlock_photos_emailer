@@ -4,3 +4,8 @@ services:
         build: .
     redis:
         image: "redis:alpine"
+        volumes:
+            - emailer_volume:/data
+
+volumes:
+    emailer_volume:
