@@ -1,5 +1,5 @@
 FROM node:10.13.0
-RUN apt-get update && apt-get -y install cron
+RUN apt-get update && apt-get -y install cron ffmpeg
 
 WORKDIR /app
 COPY src /app/src
