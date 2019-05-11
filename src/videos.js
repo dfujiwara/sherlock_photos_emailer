@@ -10,7 +10,7 @@ const getVideo = async (file) => {
     resolve({
       files: [thumbnailURL],
       subject: `Sherlock video of the day`,
-      text: `Sherlock's best time at ${file.metadata.mediaLink}`
+      text: `Watch Sherlock's best time video at ${file.metadata.mediaLink}`
     })
   })
 }
