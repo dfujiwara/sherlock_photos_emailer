@@ -12,6 +12,9 @@ const FileTypes = Object.freeze({
   photo: 'image'
 })
 
+// Only keep the photos from last designated invocations to avoid repeats.
+const previousPhotoCountToFilter = 150
+
 const selectRandomFile = async () => {
   const [files] = await storage.bucket(config.storageBucketName).getFiles()
 
@@ -33,8 +36,7 @@ const selectRandomFile = async () => {
   const randomIndex = Math.floor(Math.random() * filteredPhotoFiles.length)
   const randomPhotoFile = filteredPhotoFiles[randomIndex]
 
-  // Only keep the photos from last 30 invocations to avoid repeats.
-  if (previousPhotoNameSet.size >= 30) {
+  if (previousPhotoNameSet.size >= previousPhotoCountToFilter) {
     await redisLpop(redisKey)
   }
   await redisRpush(redisKey, randomPhotoFile.name)
